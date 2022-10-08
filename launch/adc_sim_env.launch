@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<!-- 1.57079632679   3.14159265 -->
+<launch>
+
+  <arg name="output"                      default="screen"/>
+  <arg name="launch_prefix"               default=""/>
+
+  <arg name="gazebo_gui"                  default="True"/>
+  <arg name="car_x"                       default="0.0"/>
+  <arg name="car_y"                       default="0.0"/>
+  <arg name="car_yaw"                     default="0.0"/>
+  
+  <!-- <arg name="road_name"                   default="road"/> -->
+  <arg name="road_name"                   default="sample_parking"/>
+  <arg name="road_size"                   default="10.0"/>
+  <!-- <arg name="road_path"                   default="$(env HOME)/Downloads"/> -->
+  <arg name="road_path"                   default="$(find iri_adc_circuit_example)/data/$(arg road_name)"/>
+  <arg name="road_x"                      default="3.50"/>
+  <arg name="road_y"                      default="3.8"/>
+  <arg name="road_yaw"                    default="1.57079632679"/>
+
+  <arg name="bodywork"                    default="False"/>
+  <arg name="model"                       default="$(find iri_model_car_description)/urdf/car.xacro" unless="$(arg bodywork)"/>
+  <arg name="model"                       default="$(find iri_adc_description)/urdf/adc_car.xacro" if="$(arg bodywork)"/>
+
+  <include file="$(find iri_model_car_gazebo)/launch/sim.launch">
+    <arg name="name"                       value="adc_car"/>
+    <arg name="output"                     value="$(arg output)"/>
+    <arg name="launch_prefix"              value="$(arg launch_prefix)"/>
+    <arg name="world"                      value="empty"/>
+    <arg name="gazebo_gui"                 value="$(arg gazebo_gui)"/>
+    <arg name="car_x"                      value="$(arg car_x)"/>
+    <arg name="car_y"                      value="$(arg car_y)"/>
+    <arg name="car_yaw"                    value="$(arg car_yaw)"/>
+    <arg name="sim_config_path"            value="$(find iri_adc_launch)/config/adc_sim"/>
+    <arg name="model"                      value="$(arg model)"/>
+    <arg name="car_controller_config_file" value="$(find iri_adc_launch)/config/adc_sim/adc_controller_config.yaml"/>
+    <arg name="control_config_file"        value="$(find iri_adc_launch)/config/adc_common/adc_control_config.yaml"/>
+    <arg name="odometry_config_file"       value="$(find iri_adc_launch)/config/adc_common/adc_odometry_config.yaml"/>
+    <arg name="cmd_vel_mux_config_file"    value="$(find iri_adc_launch)/config/adc_common/mux.yaml"/>
+    <arg name="local_ekf_config_file"      value="$(find iri_adc_launch)/config/adc_common/adc_local_ekf_odom_imu.yaml"/>
+  </include>
+
+  <!-- <include file="$(find iri_adc_launch)/launch/$(arg road_name)/$(arg road_name)_signals.launch">
+  </include>
+
+  <include file="$(find iri_adc_launch)/launch/$(arg road_name)/$(arg road_name)_objects.launch">
+  </include> -->
+
+  <include file="$(find iri_adc_circuit_example)/launch/$(arg road_name)/$(arg road_name)_signals.launch">
+  </include>
+
+  <include file="$(find iri_adc_circuit_example)/launch/$(arg road_name)/$(arg road_name)_objects.launch">
+  </include>
+
+  <include file="$(find iri_road_description)/launch/spawn_road.launch">
+    <arg name="road_name"  default="$(arg road_name)"/>
+    <arg name="road_size"  default="$(arg road_size)"/>
+    <arg name="road_path"  default="$(arg road_path)"/>
+    <arg name="x"          default="$(arg road_x)"/>
+    <arg name="y"          default="$(arg road_y)"/>
+    <arg name="yaw"        default="$(arg road_yaw)"/>
+    <arg name="parent"     default="map"/>
+  </include>
+
+</launch>
