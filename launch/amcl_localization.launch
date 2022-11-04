@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+<!-- -->
+<launch>
+
+    <arg name="ns"                       default="adc_car"/>
+    <!-- <arg name="move_base_name"           default="move_base"/> -->
+    <arg name="path"                     default="$(find adc_us)/params"/>
+    <!-- <arg name="move_base_params"         default="move_base_params.yaml"/> -->
+    <!-- <arg name="costmap_common_params"    default="common_params.yaml"/>
+    <arg name="costmap_local_params"     default="local_params.yaml"/>
+    <arg name="costmap_global_params"    default="global_params.yaml"/> -->
+    <arg name="map_frame_id"             default="map"/>
+    <arg name="odom_frame_id"            default="$(arg ns)/odom"/>
+    <arg name="base_frame_id"            default="$(arg ns)/base_footprint"/>
+    <arg name="map_topic"                default="/$(arg ns)/map"/>
+    <arg name="map_service"              default="/$(arg ns)/static_map"/>
+    <arg name="odom_topic"               default="/$(arg ns)/odom"/>
+    <arg name="cmd_vel_topic"            default="/$(arg ns)/navigation/cmd_vel"/>
+    <arg name="scan_topic"               default="/$(arg ns)/sensors/scan"/>
+    <arg name="map_path"                 default="$(find iri_adc_launch)/maps/sample"/>
+    <arg name="map_name"                 default="sample"/>
+    <arg name="use_map"                  default="true"/>
+    <arg name="amcl_config"              default="$(arg path)/amcl.yaml"/>
+    <arg name="initial_x"                default="0.0"/>
+    <arg name="initial_y"                default="0.0"/>
+    <arg name="initial_yaw"              default="0.0"/>
+    <!-- <arg name="local_planner"            default="dwa"/>
+    <arg name="local_planner_params"     default="dwa_params.yaml"/>
+    <arg name="global_planner"           default="global_planner"/>
+    <arg name="global_planner_params"    default="global_planner_params.yaml"/> -->
+    <arg name="output"                   default="screen" />
+    <arg name="launch_prefix"            default="" />
+
+
+    <include file="$(find iri_rosnav)/launch/include/map_server.launch">
+        <arg name="ns"            value="$(arg ns)"/>
+        <arg name="map_frame_id"  value="$(arg map_frame_id)"/>
+        <arg name="map_path"      value="$(arg map_path)"/>
+        <arg name="map_name"      value="$(arg map_name)"/>
+        <arg name="map_topic"     value="$(arg map_topic)"/>
+        <arg name="map_service"   value="$(arg map_service)"/>
+        <arg name="output"        value="$(arg output)" />
+        <arg name="launch_prefix" value="$(arg launch_prefix)" />
+    </include>
+
+    <include file="$(find iri_rosnav)/launch/include/amcl.launch">
+        <arg name="ns"            value="$(arg ns)"/>
+        <arg name="config"        value="$(arg amcl_config)"/>
+        <arg name="map_frame_id"  value="$(arg map_frame_id)"/>
+        <arg name="odom_frame_id" value="$(arg odom_frame_id)"/>
+        <arg name="base_frame_id" value="$(arg base_frame_id)"/>
+        <arg name="initial_x"     value="$(arg initial_x)"/>
+        <arg name="initial_y"     value="$(arg initial_y)"/>
+        <arg name="initial_yaw"   value="$(arg initial_yaw)"/>
+        <arg name="scan_topic"    value="$(arg scan_topic)"/>
+        <arg name="map_service"   value="$(arg map_service)"/>
+        <arg name="output"        value="$(arg output)" />
+        <arg name="launch_prefix" value="$(arg launch_prefix)" />
+    </include>
+
+    <!-- <include file="$(find iri_rosnav)/launch/include/move_base.launch">
+        <arg name="ns"                       value="$(arg ns)"/>
+        <arg name="move_base_name"           value="$(arg move_base_name)"/>
+        <arg name="path"                     value="$(arg path)"/>
+        <arg name="move_base_params"         value="$(arg move_base_params)"/>
+        <arg name="costmap_common_params"    value="$(arg costmap_common_params)"/>
+        <arg name="costmap_local_params"     value="$(arg costmap_local_params)"/>
+        <arg name="costmap_global_params"    value="$(arg costmap_global_params)"/>
+        <arg name="use_map"                  value="$(arg use_map)"/> 
+        <arg name="map_topic"                value="$(arg map_topic)"/>
+        <arg name="odom_topic"               value="$(arg odom_topic)"/>
+        <arg name="cmd_vel_topic"            value="$(arg cmd_vel_topic)"/>
+        <arg name="local_planner"            value="$(arg local_planner)"/>
+        <arg name="local_planner_params"     value="$(arg local_planner_params)"/>
+        <arg name="global_planner"           value="$(arg global_planner)"/>
+        <arg name="global_planner_params"    value="$(arg global_planner_params)"/>
+        <arg name="output"                   value="$(arg output)" />
+        <arg name="launch_prefix"            value="$(arg launch_prefix)" />
+    </include> -->
+
+
+</launch>
