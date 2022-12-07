@@ -1,0 +1,11 @@
+base_global_planner: "iri_opendrive_global_planner/OpendriveGlobalPlanner"
+OpendriveGlobalPlanner:
+  opendrive_frame: "opendrive"
+  angle_tol: 0.5
+  dist_tol: 0.3
+  multi_hyp: True
+  resolution: 0.01
+  scale_factor: 10.0
+  min_road_length: 0.01
+  cost_type: 0
+

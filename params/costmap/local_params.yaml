@@ -1,0 +1,16 @@
+#local_costmap:  ###namespace added when loading parameters in move_base.launch
+global_frame: adc_car/odom
+update_frequency: 5.0
+publish_frequency: 2.0
+rolling_window: true
+width: 5.0
+height: 5.0
+resolution: 0.05
+origin_x: 0.0
+origin_y: 0.0
+
+#costmap plugins
+plugins:
+  - {name: obstacle_layer,  type: "costmap_2d::ObstacleLayer"}
+  - {name: inflation_layer, type: "costmap_2d::InflationLayer"}
+  - {name: sonar_layer, type: }

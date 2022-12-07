@@ -1,0 +1,54 @@
+base_local_planner: "AckermannPlannerROS"
+
+AckermannPlannerROS:
+  max_sim_time: 1.75
+  min_sim_time: 1.75
+  sim_granularity: 0.05
+  angular_sim_granularity: 0.01
+
+  path_distance_bias: 50.0
+  goal_distance_bias: 10.0
+  occdist_scale: 0.05
+
+  oscillation_reset_dist: 0.002
+  oscillation_reset_angle: 0.001
+
+  trans_vel_samples: 31
+  steer_angle_samples: 21
+  angular_vel_samples: 21
+  use_steer_angle_cmd: true
+
+  prune_plan: true
+  xy_goal_tolerance: 0.1
+  yaw_goal_tolerance: 0.2
+  trans_stopped_vel: 0.1
+  rot_stopped_vel: 0.1
+
+  restore_defaults: false
+
+  max_trans_vel: 1.0
+  min_trans_vel: -0.2
+  max_trans_acc: 0.5
+  max_steer_angle: 0.46
+  min_steer_angle: -0.46
+  max_steer_vel: 0.3
+  min_steer_vel: -0.3
+  max_steer_acc: 5.0
+  max_angular_vel: 0.5
+  min_angular_vel: -0.5
+  axis_distance: 0.36
+  wheel_distance: 0.265
+  wheel_radius: 0.05
+
+  use_trans_vel_deadzone: True
+  trans_vel_deadzone: 0.1
+
+  split_ignore_length: 0.1
+
+  cmd_vel_avg: 1
+  odom_avg: 1
+
+  planner_patience: 5
+
+  hdiff_scale: 1.0
+  heading_points: 8

@@ -1,0 +1,43 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "~/ADC/catkin_ws/devel/include/**",
+        "/opt/ros/melodic/include/**",
+        "~/ADC/catkin_ws/src/adc_us/include/**",
+        "~/ADC/catkin_ws/src/navigation/iri_ackermann_local_planner/include/**",
+        "~/ADC/catkin_ws/src/iri_core/iri_action_server/include/**",
+        "~/ADC/catkin_ws/src/adc/iri_adc_global_sign_localization/include/**",
+        "~/ADC/catkin_ws/src/adc/iri_adc_jury/include/**",
+        "~/ADC/catkin_ws/src/adc/iri_adc_jury_server/include/**",
+        "~/ADC/catkin_ws/src/adc/iri_adc_landmarks_slam_solver/include/**",
+        "~/ADC/catkin_ws/src/adc/iri_adc_tag_localization_filter/include/**",
+        "~/ADC/catkin_ws/src/iri_core/iri_base_algorithm/include/**",
+        "~/ADC/catkin_ws/src/iri_core/iri_base_bt_client/include/**",
+        "~/ADC/catkin_ws/src/iri_core/iri_base_driver/include/**",
+        "~/ADC/catkin_ws/src/iri_core/iri_behaviortree/include/**",
+        "~/ADC/catkin_ws/src/tools/iri_dynamic_transform_publisher/include/**",
+        "~/ADC/catkin_ws/src/adc/iri_gazebo_set_material_plugin/include/**",
+        "~/ADC/catkin_ws/src/adc/iri_image_inverter/include/**",
+        "~/ADC/catkin_ws/src/adc/iri_image_roi/include/**",
+        "~/ADC/catkin_ws/src/sensors/imu/iri_imu_msg_fix/include/**",
+        "~/ADC/catkin_ws/src/platforms/model_car/iri_model_car_control/include/**",
+        "~/ADC/catkin_ws/src/platforms/model_car/simulator/iri_model_car_controller/include/**",
+        "~/ADC/catkin_ws/src/platforms/model_car/iri_model_car_odometry/include/**",
+        "~/ADC/catkin_ws/src/iri_core/iri_ros_tools/include/**",
+        "~/ADC/catkin_ws/src/external/libuvc_ros/libuvc_camera/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}

@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<!-- -->
+<launch>
+
+  <arg name="ns"                       value="adc_car"/>
+  <arg name="move_base_name"           value="move_base"/>
+  <arg name="path"                     value="$(find adc_us)/params"/>
+  
+  <arg name="move_base_params"         value="move_base_params.yaml"/>
+  <arg name="costmap_common_params"    value="common_params.yaml"/>
+  <arg name="costmap_local_params"     value="local_params.yaml"/>
+  <arg name="costmap_global_params"    value="global_params.yaml"/>
+  
+  <arg name="use_map"                  value="true"/>
+  
+  <arg name="map_topic"                value="/$(arg ns)/map"/>
+  <arg name="odom_topic"               value="/$(arg ns)/odom"/>
+  <arg name="cmd_vel_topic"            value="/$(arg ns)/navigation/cmd_vel"/>
+  
+  <!-- <arg name="local_planner"            value="dwa"/> -->
+  <!-- <arg name="local_planner_params"     value="dwa_params.yaml"/> -->
+  <arg name="local_planner"            value="ackermann"/>
+  <arg name="local_planner_params"     value="ackermann_params.yaml"/>
+
+  <arg name="global_planner"           value="global_planner"/>
+  <arg name="global_planner_params"    value="global_planner_params.yaml"/>
+
+  <arg name="costmap_path"             value="map"    if="$(arg use_map)"/>
+  <arg name="costmap_path"             value="no_map" unless="$(arg use_map)"/>
+  
+  <arg name="output"                   value="screen" />
+  <arg name="launch_prefix"            value="" />
+
+  <group ns="$(arg ns)">
+
+    <node pkg ="move_base" 
+          type="move_base" 
+          name="$(arg move_base_name)"
+          output="$(arg output)"
+          launch-prefix="$(arg launch_prefix)">
+      <remap from="/map"    to="$(arg map_topic)" />
+      <remap from="cmd_vel" to="$(arg cmd_vel_topic)" />
+      <remap from="odom"    to="$(arg odom_topic)" />
+      <remap from="move_base_simple/goal"    to="$(arg move_base_name)_simple/goal" />
+      <remap from="move_base"    to="$(arg move_base_name)" />
+
+      <rosparam file="$(arg path)/$(arg move_base_params)"                                  command="load" />
+      <rosparam file="$(arg path)/local_planner/$(arg local_planner_params)"                command="load" />
+      <rosparam file="$(arg path)/global_planner/$(arg global_planner_params)"              command="load" />
+
+      <rosparam file="$(arg path)/costmap/$(arg costmap_common_params)"                     command="load" ns="local_costmap" />
+      <rosparam file="$(arg path)/costmap/$(arg costmap_local_params)"                      command="load" ns="local_costmap"/>
+
+      <rosparam file="$(arg path)/costmap/$(arg costmap_common_params)"                     command="load" ns="global_costmap" />
+      <rosparam file="$(arg path)/costmap/$(arg costmap_path)/$(arg costmap_global_params)" command="load" ns="global_costmap"/> 
+
+    </node>
+
+  </group>
+  
+</launch>

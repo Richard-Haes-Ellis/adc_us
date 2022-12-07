@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+  <arg name="car_name"        default="adc_car"/>
+  <arg name="output"          default="screen"/>
+  <arg name="launch_prefix"   default=""/>
+  <arg name="dr"              default="false"/>
+
+  <!--Ar track alvar parameters-->
+  <arg name="marker_size"     default="5.0"/>
+  <arg name="ar_max_freq"     default="30.0"/>
+
+  <!-- Img ROI parameters -->
+  <arg name="front_roi_config_file" default="$(find iri_adc_launch)/config/adc_common/basler_roi_config.yaml"/>
+  <arg name="rear_roi_config_file"  default="$(find iri_adc_launch)/config/adc_common/delock_roi_config.yaml"/>
+
+  <!-- Global localization parameters-->
+  <arg name="car_x"                       default="0.0"/>
+  <arg name="car_y"                       default="0.0"/>
+  <arg name="car_yaw"                     default="0.0"/>
+  <arg name="landmarks_config_dir"        default="$(find iri_adc_launch)/config/adc_common/landmarks_loc"/>
+  <arg name="landmarks_config_file"       default="amcl_mapping.yaml"/>
+  <arg name="landmarks_data_dir"          default="$(find iri_adc_launch)/data/sample_parking"/>
+  <arg name="landmarks_file"              default="landmarks.txt"/>
+  <arg name="load_landmarks_from_xodr"    default="false"/>
+  <arg name="use_rear_camera_loc"         default="true"/>
+
+  <group ns="$(arg car_name)">
+    <!-- Front image ROI -->
+    <include file="$(find iri_image_roi)/launch/node.launch">
+      <arg name="node_name"              value="front_iri_image_roi"/>
+      <arg name="output"                 value="$(arg output)"/>
+      <arg name="launch_prefix"          value="$(arg launch_prefix)"/>
+      <arg name="config_file"            value="$(arg front_roi_config_file)"/>
+      <arg name="image_raw_in_topic"     value="/$(arg car_name)/sensors/basler_camera/image_raw"/>
+      <arg name="camera_info_in_topic"   value="/$(arg car_name)/sensors/basler_camera/camera_info"/>
+      <arg name="image_raw_out_topic"    value="/$(arg car_name)/sensors/basler_camera_roi/image_raw"/>
+      <arg name="camera_info_out_topic"  value="/$(arg car_name)/sensors/basler_camera_roi/camera_info"/>
+  </include>
+
+  <!-- Front image inverter -->
+    <include file="$(find iri_image_inverter)/launch/node.launch">
+      <arg name="node_name"         value="front_iri_image_inverter"/>
+      <arg name="output"            value="$(arg output)"/>
+      <arg name="launch_prefix"     value="$(arg launch_prefix)"/>
+      <arg name="image_in_topic"    value="/$(arg car_name)/sensors/basler_camera_roi/image_raw"/>
+      <arg name="image_out_topic"   value="/$(arg car_name)/sensors/basler_camera_inverse/image_raw"/>
+    </include>
+
+    <!-- Front ar track_alvar -->
+    <node name="front_ar_track_alvar" 
+          pkg="ar_track_alvar" 
+          type="individualMarkersNoKinect" 
+          respawn="false" 
+          output="screen">
+      <param name="marker_size"           type="double" value="$(arg marker_size)" />
+      <param name="max_frequency"         type="double" value="$(arg ar_max_freq)" />
+      <param name="max_new_marker_error"  type="double" value="0.08" />
+      <param name="max_track_error"       type="double" value="0.2" />
+      <param name="marker_margin"         type="double" value="1.0" />
+      <param name="output_frame"          type="string" value="$(arg car_name)/front_camera_uvc_camera_optical" />
+      <remap from="/$(arg car_name)/camera_image"     to="/$(arg car_name)/sensors/basler_camera_inverse/image_raw" />
+      <remap from="/$(arg car_name)/camera_info"      to="/$(arg car_name)/sensors/basler_camera_inverse/camera_info" />
+      <remap from="/$(arg car_name)/ar_pose_marker"   to="/$(arg car_name)/front_ar_pose_marker" />
+    </node>
+
+    <!-- Front ar tag filter -->
+    <include file="$(find iri_adc_tag_localization_filter)/launch/node.launch">
+      <arg name="node_name"                value="front_iri_adc_tag_localization_filter"/>
+      <arg name="output"                   value="$(arg output)"/>
+      <arg name="launch_prefix"            value="$(arg launch_prefix)"/>
+      <arg name="config_file"              value="$(find iri_adc_launch)/config/adc_common/ar_tag_loc_filter.yaml"/>
+      <arg name="robot_name"               value="$(arg car_name)"/>
+      <arg name="ar_input_topic"           value="/$(arg car_name)/front_ar_pose_marker"/>
+      <arg name="features_output_topic"    value="/$(arg car_name)/front_features"/>
+    </include>
+    
+
+    <group if="$(arg use_rear_camera_loc)">
+      <!-- Rear image ROI -->
+      <include file="$(find iri_image_roi)/launch/node.launch">
+        <arg name="node_name"              value="rear_iri_image_roi"/>
+        <arg name="output"                 value="$(arg output)"/>
+        <arg name="launch_prefix"          value="$(arg launch_prefix)"/>
+        <arg name="config_file"            value="$(arg rear_roi_config_file)"/>
+        <arg name="image_raw_in_topic"     value="/$(arg car_name)/sensors/delock_camera/image_raw"/>
+        <arg name="camera_info_in_topic"   value="/$(arg car_name)/sensors/delock_camera/camera_info"/>
+        <arg name="image_raw_out_topic"    value="/$(arg car_name)/sensors/delock_camera_roi/image_raw"/>
+        <arg name="camera_info_out_topic"  value="/$(arg car_name)/sensors/delock_camera_roi/camera_info"/>
+      </include>
+
+      <!-- Rear image inverter -->
+      <include file="$(find iri_image_inverter)/launch/node.launch">
+        <arg name="node_name"         value="rear_iri_image_inverter"/>
+        <arg name="output"            value="$(arg output)"/>
+        <arg name="launch_prefix"     value="$(arg launch_prefix)"/>
+        <arg name="image_in_topic"    value="/$(arg car_name)/sensors/delock_camera_roi/image_raw"/>
+        <arg name="image_out_topic"   value="/$(arg car_name)/sensors/delock_camera_inverse/image_raw"/>
+      </include>
+
+      <!--rear ar track_alvar -->
+      <node name="rear_ar_track_alvar" 
+            pkg="ar_track_alvar" 
+            type="individualMarkersNoKinect" 
+            respawn="false" 
+            output="screen">
+        <param name="marker_size"           type="double" value="$(arg marker_size)"/>
+        <param name="max_frequency"         type="double" value="$(arg ar_max_freq)"/>
+        <param name="max_new_marker_error"  type="double" value="0.08" />
+        <param name="max_track_error"       type="double" value="0.2" />
+        <param name="marker_margin"         type="double" value="1.0" />
+        <param name="output_frame"          type="string" value="$(arg car_name)/rear_camera_uvc_camera_optical" />
+        <remap from="/$(arg car_name)/camera_image"     to="/$(arg car_name)/sensors/delock_camera_inverse/image_raw" />
+        <remap from="/$(arg car_name)/camera_info"      to="/$(arg car_name)/sensors/delock_camera_inverse/camera_info" />
+        <remap from="/$(arg car_name)/ar_pose_marker"   to="/$(arg car_name)/rear_ar_pose_marker" />
+      </node>
+
+      <!-- Rear ar tag filter -->
+      <include file="$(find iri_adc_tag_localization_filter)/launch/node.launch">
+        <arg name="node_name"                value="rear_iri_adc_tag_localization_filter"/>
+        <arg name="output"                   value="$(arg output)"/>
+        <arg name="launch_prefix"            value="$(arg launch_prefix)"/>
+        <arg name="config_file"              value="$(find iri_adc_launch)/config/adc_common/ar_tag_loc_filter.yaml"/>
+        <arg name="robot_name"               value="$(arg car_name)"/>
+        <arg name="ar_input_topic"           value="/$(arg car_name)/rear_ar_pose_marker"/>
+        <arg name="features_output_topic"    value="/$(arg car_name)/rear_features"/>
+      </include>
+    </group>
+
+    <include file="$(find iri_adc_landmarks_slam_solver)/launch/node.launch">
+      <arg name="node_name"                  value="iri_adc_landmarks_slam_solver"/>
+      <arg name="output"                     value="$(arg output)"/>
+      <arg name="launch_prefix"              value="$(arg launch_prefix)"/>
+      <arg name="config_file"                value="$(arg landmarks_config_dir)/$(arg landmarks_config_file)"/>
+      <arg name="landmarks_map_file"         value="$(arg landmarks_data_dir)/$(arg landmarks_file)"/>
+      <arg name="load_landmarks_from_xodr"   value="$(arg load_landmarks_from_xodr)"/>
+      <arg name="estimated_pose_topic_name"  value="/$(arg car_name)/estimated_pose"/>
+      <arg name="initialpose_topic_name"     value="/$(arg car_name)/initialpose"/>
+      <arg name="front_features_topic_name"  value="/$(arg car_name)/front_features"/>
+      <arg name="rear_features_topic_name"   value="/$(arg car_name)/rear_features"/>
+      <arg name="initial_pose_x"     value="$(arg car_x)"/>
+      <arg name="initial_pose_y"     value="$(arg car_y)"/>
+      <arg name="initial_pose_yaw"   value="$(arg car_yaw)"/>
+    </include>
+  </group>
+
+  <node name="rqt_reconfigure_iri_adc_tag_localization_filter"
+        pkg ="rqt_reconfigure"
+        type="rqt_reconfigure"
+        if  ="$(arg dr)"
+        args="iri_adc_tag_localization_filter">
+  </node>
+</launch>

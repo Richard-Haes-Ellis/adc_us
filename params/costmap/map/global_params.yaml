@@ -1,0 +1,23 @@
+#global_costmap: ###namespace added when loading parameters in move_base.launch
+global_frame: map
+update_frequency: 1.0
+publish_frequency: 0.0
+rolling_window: false
+
+plugins:
+  - {name: static_layer,    type: "costmap_2d::StaticLayer"}
+  - {name: obstacle_layer,  type: "costmap_2d::ObstacleLayer"}
+  - {name: inflation_layer, type: "costmap_2d::InflationLayer"}
+    
+static_layer:
+  enabled: true
+  map_topic: /map
+  first_map_only: false
+  subscribe_to_updates: false
+  unknown_cost_value: -1
+  use_maximum: false
+  lethal_cost_threshold: 100
+  track_unknown_space: true
+  trinary_costmap: true
+
+
